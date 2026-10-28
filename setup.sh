@@ -3,11 +3,11 @@
 #  ACME Corp — "The Server Room Incident"
 #  World generator for the Linux workshop.
 #
-#  Usage:   bash setup.sh            (asks for your first name)
-#           bash setup.sh Priya      (name given directly)
+#  Usage:   bash setup.sh            (asks for your ID, e.g. priya07)
+#           bash setup.sh priya07   (ID given directly)
 #
 #  Creates  ~/acme-corp   (or $WORKSHOP_HOME/acme-corp)
-#  Everything inside is generated from your name, so your evidence,
+#  Everything inside is generated from your ID, so your evidence,
 #  culprit and answers are different from your neighbour's.
 # =====================================================================
 
@@ -16,7 +16,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # ---------- 1. Who are you? ----------------------------------------
 NAME="${1:-}"
 while [ -z "$NAME" ]; do
-  printf 'Your first name (this seeds your world): '
+  printf 'Your first name + roll number, e.g. priya07 (this seeds your world): '
   read -r NAME
 done
 NAME="$(printf '%s' "$NAME" | tr -d '\r' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9')"

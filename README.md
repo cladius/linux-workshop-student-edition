@@ -13,12 +13,12 @@ pipes, redirection, `chmod`, `du`, `ps`, `kill`.
 Open **Git Bash** (Windows) or a terminal (Linux / Mac), then:
 
 ```bash
-git clone https://github.com/<org>/linux-workshop.git
-cd linux-workshop
+git clone https://github.com/cladius/linux-workshop-student-edition.git
+cd linux-workshop-student-edition
 bash setup.sh
 ```
 
-It asks for your first name and builds your own copy of ACME Corp in
+It asks for your ID — your first name plus your roll number, e.g. `priya07` — and builds your own copy of ACME Corp in
 `~/acme-corp`. Your copy is different from your neighbour's — same
 story, different culprit — so compare *commands*, not answers.
 
@@ -40,7 +40,7 @@ A third gives you the command. There is no penalty for wrong answers
 except pride.
 
 Messed up your world (deleted too much)? `bash setup.sh` again, same
-name, answer `y` to wipe.
+ID, answer `y` to wipe.
 
 ## What's in this repo
 
