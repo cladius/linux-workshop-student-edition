@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# ./start-services — simulates the three background services running on the web server.
+# One of them should not be there.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT" || exit 1
+mkdir -p infra/run
+
+# stop old copies first
+for p in infra/run/*.pid; do [ -f "$p" ] && kill "$(cat "$p")" 2>/dev/null; done
+rm -f infra/run/*.pid
+
+for svc in backup-agent health-monitor xmr-miner; do
+  nohup bash "infra/services/$svc.sh" >/dev/null 2>&1 &
+  echo $! > "infra/run/$svc.pid"
+done
+sleep 1
+echo
+echo "  3 services started on $(cat "infra/servers/$(grep '^server=' .state/meta | cut -d= -f2)/etc/hostname.conf" | head -n 1 | cut -d' ' -f2)."
+echo "  PID files are in infra/run/.  Use 'ps' to see processes, 'kill PID' to stop one."
+echo

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# ./submit — close the case. Verifies all 15 tasks and prints your certificate.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT" || exit 1
+meta() { grep "^$1=" .state/meta | cut -d= -f2-; }
+
+missing=""
+for n in $(seq 1 15); do grep -qx "$n" .state/done || missing="$missing $n"; done
+if [ -n "$missing" ]; then
+  echo
+  echo "  Case not closed yet. Unfinished tasks:$missing"
+  echo "  Run ./check to see where you are."
+  echo
+  exit 1
+fi
+
+# stop any leftover services quietly
+for p in infra/run/*.pid; do [ -f "$p" ] && kill "$(cat "$p")" 2>/dev/null; done
+
+start=$(meta start); now=$(date +%s); el=$(( now - start ))
+mins=$(( el / 60 )); secs=$(( el % 60 ))
+name=$(meta name)
+NAME=$(printf '%s' "$name" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
+wrong=$(wc -l < .state/attempts | tr -d ' ')
+
+cat <<EOF
+
+  ╔══════════════════════════════════════════════════════════════╗
+  ║                                                              ║
+  ║            ACME CORP  —  CASE CLOSED                         ║
+  ║                                                              ║
+  ║   Investigator : $(printf '%-44s' "$NAME")║
+  ║   Time taken   : $(printf '%-44s' "${mins}m ${secs}s")║
+  ║   Wrong turns  : $(printf '%-44s' "$wrong (every one of them taught you something)")║
+  ║                                                              ║
+  ║   You found the server, the night, the culprit and the       ║
+  ║   file — using nothing but a terminal.                       ║
+  ║                                                              ║
+  ║   Commands you now own:                                      ║
+  ║   pwd ls cd mkdir cp mv rm cat less head tail wc             ║
+  ║   grep find cut sort uniq | > >> chmod du ps kill            ║
+  ║                                                              ║
+  ╚══════════════════════════════════════════════════════════════╝
+
+  Your report:
+$(sed 's/^/    /' evidence/report.txt)
+
+  BONUS (if there's time): put your Act 3 pipeline into a file called
+  hunt.sh, make it executable with chmod +x, and run it with ./hunt.sh
+  That's your first shell script.
+
+EOF
